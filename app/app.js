@@ -64,6 +64,14 @@ function render(incidents) {
       li.setAttribute('data-testid', 'incident-row');
       li.dataset.id = i.id;
       li.innerHTML = rowHtml(i);
+    } else {
+      // Keep the row's node (and its ack state); only refresh what the API may have changed.
+      const t = li.querySelector('time');
+      if (t.getAttribute('datetime') !== i.openedAt) {
+        t.setAttribute('datetime', i.openedAt);
+        t.title = i.openedAt;
+        t.textContent = localTime(i.openedAt);
+      }
     }
     li.className = `row ${i.severity}${acked.has(i.id) ? ' is-acked' : ''}`;
     renderAction(li);
