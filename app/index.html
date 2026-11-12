@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="build" content="__BUILD_SHA__" />
     <title>sched-prod · incidents</title>
+    <link rel="icon" href="favicon.svg" />
     <link rel="stylesheet" href="style.css" />
     <script type="module" src="app.js"></script>
   </head>
@@ -13,8 +15,10 @@
       <p class="sub">sched-prod · tonight</p>
     </header>
     <main data-testid="board">
-      <ul data-testid="incident-list" class="list"></ul>
+      <div data-testid="loader" class="loader" role="status" aria-live="polite"><span class="spin"></span> Loading incidents…</div>
+      <p data-testid="empty" class="empty" hidden>No incidents tonight.</p>
+      <ul data-testid="incident-list" class="list" hidden></ul>
     </main>
-    <footer>sched-prod incident board</footer>
+    <footer>sched-prod incident board · build <code data-testid="build-sha"></code></footer>
   </body>
 </html>

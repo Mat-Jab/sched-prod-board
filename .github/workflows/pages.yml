@@ -1,0 +1,36 @@
+# Deploys app/ to GitHub Pages and stamps the build sha into the page (R6).
+name: pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Write config from secrets
+        env:
+          BOARD_API: https://hq.mega.dev/challenges/show-me-when/api
+          BOARD_SESSION: ${{ secrets.BOARD_SESSION }}
+        run: |
+          test -n "$BOARD_SESSION" || { echo "BOARD_SESSION secret missing"; exit 1; }
+          printf "export const API = '%s';\nexport const SESSION = '%s';\n" "$BOARD_API" "$BOARD_SESSION" > app/config.js
+      - name: Stamp build sha
+        run: sed -i "s/__BUILD_SHA__/${GITHUB_SHA}/" app/index.html && grep 'name="build"' app/index.html
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: app
+      - id: deployment
+        uses: actions/deploy-pages@v4

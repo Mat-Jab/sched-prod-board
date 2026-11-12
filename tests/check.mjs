@@ -1,0 +1,22 @@
+// Quick check of the plan's flows against a board URL: node tests/check.mjs <url> [timezone] [locale]
+import { chromium } from 'playwright';
+const [url, tz = 'Europe/Berlin', locale = 'de-DE'] = process.argv.slice(2);
+const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
+const page = await browser.newPage({ timezoneId: tz, locale });
+page.on('console', (m) => console.log('console:', m.text()));
+await page.goto(url);
+console.log('loader visible at open:', await page.locator('[data-testid="loader"]').isVisible().catch(() => false));
+await page.locator('[data-testid="incident-row"]').first().waitFor();
+console.log('loader count after load:', await page.locator('[data-testid="loader"]').count());
+console.log('meta build:', await page.locator('meta[name="build"]').getAttribute('content'), 'footer:', await page.locator('[data-testid="build-sha"]').textContent());
+const rows = page.locator('[data-testid="incident-row"]');
+console.log('rows:', await rows.count());
+for (const r of (await rows.all()).slice(0, 3)) console.log(' ', (await r.innerText()).replace(/\s+/g, ' '), '|', await r.locator('time').getAttribute('datetime'));
+const target = rows.nth(1);
+const id = await target.getAttribute('data-id');
+await target.locator('[data-testid="ack"]').click();
+await page.locator(`[data-testid="incident-row"][data-id="${id}"] [data-testid="acked"]`).waitFor();
+console.log('acked', id);
+await page.waitForTimeout(5000);
+console.log('acked survives refresh:', await page.locator(`[data-testid="incident-row"][data-id="${id}"] [data-testid="acked"]`).count());
+await browser.close();
