@@ -3,7 +3,7 @@ header, main, footer { padding: 12px 24px; }
 h1 { margin: 0; font-size: 22px; }
 .sub { margin: 2px 0 0; color: #666; }
 .list { list-style: none; margin: 0; padding: 0; max-width: 960px; }
-.row { display: grid; grid-template-columns: 90px 50px 1fr 230px 80px; gap: 12px; align-items: center; min-height: 44px; padding: 0 12px; border-bottom: 1px solid #e5e5e5; background: #fff; }
+.row { display: grid; grid-template-columns: 90px 50px 1fr 230px 60px; gap: 12px; align-items: center; min-height: 44px; padding: 0 12px; border-bottom: 1px solid #e5e5e5; background: #fff; }
 .row .id { font-family: ui-monospace, monospace; }
 .row.sev1 .sev { color: #b00020; font-weight: 600; }
 .row.sev2 .sev { color: #a15c00; }
@@ -19,3 +19,22 @@ footer { color: #777; font-size: 13px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .empty { color: #666; padding: 16px 12px; }
 footer code { font-family: ui-monospace, monospace; }
+/* Incident panel (product decision after step 1: Ack lives in the panel, not the row) */
+main { display: grid; grid-template-columns: minmax(0, 960px) 300px; gap: 16px; align-items: start; }
+main > .loader, main > .empty { grid-column: 1; }
+.row { cursor: pointer; }
+.row:hover { background: #f5f7fb; }
+.row.is-open { outline: 2px solid #1d1d1f; outline-offset: -2px; }
+.panel { grid-column: 2; grid-row: 1 / span 3; position: sticky; top: 12px; background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 12px 16px; }
+.panel-head { display: flex; justify-content: space-between; align-items: center; }
+.panel-id { margin: 0; font: 600 18px ui-monospace, monospace; }
+.panel-close { font: inherit; font-size: 20px; border: 0; background: none; cursor: pointer; }
+.panel-sev { margin: 4px 0 8px; }
+.panel-sev.sev1 { color: #b00020; font-weight: 600; }
+.panel-sev.sev2 { color: #a15c00; }
+.panel dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; margin: 0 0 12px; }
+.panel dt { color: #666; }
+.panel dd { margin: 0; }
+.panel-ack { width: 100%; padding: 8px 12px; }
+.panel-acked { color: #1a7f37; font-weight: 600; margin: 0; }
+@media (max-width: 900px) { main { grid-template-columns: 1fr; } .panel { grid-column: 1; grid-row: auto; position: static; } }
